@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+
+<body>
+    <div class="row p-0 m-0">
+        <div class="col-sm-10 p-0">
+            <div id='canvas'></div>
+        </div>
+        <div class='col-sm-2 p-0 panel'>
+            <div class='container pt-2'>
+                <h4>Mouse Guide</h4>
+                &#128433; MLB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROTATE<br />
+                &#128433; MRB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PAN<br />
+                &#128433; MMB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZOOM <br />
+                &#128433; MLB+Shift: &nbsp;&nbsp;SELECT<br />
+                &#128433; Drag+Alt: &nbsp;&nbsp;&nbsp;&nbsp;SELECT AREA <br />
+                &#128433; MLB+Ctrl: &nbsp;&nbsp;&nbsp;&nbsp;MOVE<br />
+                <button type="button" id='homeBtn' class="btn btn-primary btn-sm col-12 mt-2">Home View</button>
+            </div>
+
+            <div class='container pt-2'>
+                <div class="form-group">
+                    <label for="tag1">Category: </label>
+                    <select id='tag1' class='form-control'>
+                        <option value="-3" selected></option>
+                        <option value="-1">None</option>
+                        <option value="-2">Select All</option>
+                    </select>
+
+                    <button type="button" id='addBtn' class="btn btn-info col-12 mt-3 btn-sm" data-toggle="modal"
+                        data-target="#categoryModal" data-whatever="@mdo">Add Category</button>
+                </div>
+            </div>
+
+            <div class='container pt-2'>
+                <h4 style='text-align: center;'>Selected Image</h4>
+                <div class='container' style='border: 1px solid rgb(153, 149, 149);'>
+                    <div class="form-group">
+                        <label for="imgName" class="mt-2">Image Name</label>
+                        <textarea class="form-control" id="imgName"></textarea>
+                        <!-- <input type="text" class="form-control" id="imgName" placeholder=""> -->
+                    </div>
+                    <div class="form-group">
+                        <label for="tag2">Category: </label>
+                        <select id='tag2' class='form-control'>
+                            <option value="-1" selected></option>
+                        </select>
+                    </div>
+                    <button type="button" id="updateBtn" class="btn btn-primary mb-2 col-12 btn-sm">Update</button>
+                    <button type="button" id="multipleBtn" class="btn btn-primary mb-2 col-12 btn-sm">Mutiple
+                        Updates</button>
+                </div>
+            </div>
+
+            <div class="container">
+                <button type='button' id="extractBtn" class='btn btn-success mt-4 col-12'>Extract JSON</button>
+            </div>
+        </div>
+
+
+        <div id="description">
+            <div class="container">
+                <div class="row">
+                    <span id="description-content"></span><br />
+                </div>
+            </div>
+        </div>
+
+        <!--Modal: Image Blow Up-->
+        <div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Body-->
+                    <div class="modal-body mb-0 p-0">
+                        <div class="embed-responsive z-depth-1-half">
+                            <img id='blowup' style="width:100%" />
+                            <!-- </div> -->
+
+                        </div>
+                        <!--Footer-->
+                        <div class="modal-footer justify-content-center">
+                            <span class="mr-4" id='modalImageName'></span>
+                            <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4"
+                                data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                    <!--/.Content-->
+
+                </div>
+            </div>
+            <!--Modal: Image Blow Up-->
+        </div>
+
+
+        <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="categoryModalLabel">Please input a new category name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Category:</label>
+                                <input type="text" class="form-control" id="newCategory">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id='addCategoryBtn' data-dismiss="modal"
+                            class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.4/gsap.min.js"></script>
+        <script>
+            var print = console.log.bind(console, '*<3uj: ')
+        </script>
+        <script type="module" src="src/main.js"></script>
+
+</body>
+
+</html>
