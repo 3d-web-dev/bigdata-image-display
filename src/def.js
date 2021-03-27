@@ -10,3 +10,4 @@ def['rows'] = def.imageHeight / def.spriteHeight;
 def['cols'] = def.imageWidth / def.spriteWidth;
 def['borderThickness'] = def.spriteWidth / 25;
 export { def };
+
