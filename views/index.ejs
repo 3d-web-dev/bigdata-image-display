@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -43,22 +43,17 @@
             </div>
 
             <div class='container pt-2'>
-                <h4 style='text-align: center;'>Selected Image</h4>
+                <h4 style='text-align: center;'>Selected</h4>
                 <div class='container' style='border: 1px solid rgb(153, 149, 149);'>
-                    <div class="form-group">
-                        <label for="imgName" class="mt-2">Image Name</label>
-                        <textarea class="form-control" id="imgName"></textarea>
-                        <!-- <input type="text" class="form-control" id="imgName" placeholder=""> -->
-                    </div>
+            
                     <div class="form-group">
                         <label for="tag2">Category: </label>
                         <select id='tag2' class='form-control'>
                             <option value="-1" selected></option>
                         </select>
                     </div>
-                    <button type="button" id="updateBtn" class="btn btn-primary mb-2 col-12 btn-sm">Update</button>
-                    <button type="button" id="multipleBtn" class="btn btn-primary mb-2 col-12 btn-sm">Mutiple
-                        Updates</button>
+                    <button type="button" id="multipleBtn" class="btn btn-primary mb-2 col-12 btn-sm">Update
+                        Category</button>
                 </div>
             </div>
 
@@ -130,13 +125,14 @@
                 </div>
             </div>
         </div>
+        <input type='text' value='<%= data %>' id='numOfFiles' hidden />
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.4/gsap.min.js"></script>
         <script>
-            var print = console.log.bind(console, '*<3uj: ')
+            var print = s => { }// console.log.bind(console, '*<3uj: ')
         </script>
-        <script type="module" src="src/main.js"></script>
 
+        <script type="module" src="src/main.js"></script>
 </body>
 
 </html>

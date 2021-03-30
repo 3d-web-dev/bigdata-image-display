@@ -130,18 +130,6 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
         });
 
         /* Change ImageName And Category */
-        $('#updateBtn').click(() => {
-            /* Update Category */
-            if (lastSelectedIndex) {
-                var categoryIndex = $('#tag2').children("option:selected").val();
-                imageNameLists[lastSelectedIndex.imgIndex][lastSelectedIndex.spriteIndex].name = $('#imgName').val();
-                imageNameLists[lastSelectedIndex.imgIndex][lastSelectedIndex.spriteIndex].category = categoryNames[categoryIndex];
-                alert('Successfully Updated');
-            } else {
-                alert('There is no active image. Please select only one image to update');
-            }
-        });
-
         $('#multipleBtn').click(() => {
             var multipleStatus = false;
             const category = parseInt($('#tag2').val());
@@ -149,7 +137,7 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                 setTimeout(() => { alert(txt) }, 500)
             }
             chosenImages.forEach((e) => {
-                if (e.length > 1) multipleStatus = true;
+                if (e.length > 0) multipleStatus = true;
             })
 
             if (multipleStatus) {
@@ -165,7 +153,7 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                     showInfo('Please select category.')
                 }
             } else {
-                showInfo('Please select more than 2 images');
+                showInfo('Please select at least one image');
             }
         });
 

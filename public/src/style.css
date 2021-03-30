@@ -1,0 +1,60 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+}
+
+.panel {
+    background-color: #193f5f;
+    color: white;
+}
+
+#description {
+    z-index: 10;
+    top:5000px;
+    position: absolute;
+    font-size: 12pt;
+    color: rgb(255, 255, 255);
+    background-color: rgba(38, 57, 61, 0.8);
+    box-sizing: content-box;
+    border-radius: 20px;
+    padding: 10px;
+    border: 1px solid rgb(255, 255, 255);
+}
+
+#canvas{
+    width:100%;
+    height:100vh;
+}
+
+.selectBox {
+    border: 1px solid #55aaff;
+    background-color: rgba(75, 160, 255, 0.3);
+    position: fixed;
+}
+
+.btn {
+    color: white;
+    font-size: 1.2rem;
+    padding: .6rem !important; 
+    background: linear-gradient(#ffa724, #ff8300) !important;
+    border-radius: 0.4rem !important;
+    border-width: 0 !important;
+    text-shadow: 0px  -1px 0px rgba(255, 131,0) !important;
+    box-shadow: 0px 2px 0px #ff8400d7, 0px 1px 5px rgba(0,0,0,.3), inset 0px 1px 0px rgba(255,255,255,.2), inset 0px 0px 1px rgba(255,255,255,.4) !important;
+  
+  }
+
+  .button:hover {
+    background: linear-gradient(#ffc524, #ff9900) !important;
+    color: whitesmoke;
+  }
+  
+  .button:focus {
+    background: linear-gradient(bottom, #ff8300, #ffa724) !important;
+    border: none;
+    outline: none;
+  }
+  

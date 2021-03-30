@@ -11,6 +11,8 @@ const container = document.getElementById('canvas');
 
 var scene, camera, renderer, controls;
 
+def.numOfImages = document.getElementById('numOfFiles').value
+console.log('Number of Files ', def.numOfImages)
 
 const buildScene = () => {
     const scene = new THREE.Scene();
@@ -139,4 +141,3 @@ const App = () => {
 }
 
 App();
-
