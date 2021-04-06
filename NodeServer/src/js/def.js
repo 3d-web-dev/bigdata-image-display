@@ -1,6 +1,6 @@
 var def = {
     imageWidth: 1500,
-    imageHeight: 5850,
+    imageHeight: 7500,
     spriteWidth: 150,
     spriteHeight: 150,
     numOfImages: 1,

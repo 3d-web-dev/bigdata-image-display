@@ -1,11 +1,10 @@
-import * as THREE from '../libs/three.module.js';
+import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
 import { def } from '../def.js';
 
 var MetaDataMaterial = function (exports) {
     var MetadataMaterialVertexShader = `
         precision highp float;
         varying vec2 vUv;
-        varying vec2 clipPos;
         void main() {
             vUv = uv;
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1. );
@@ -50,7 +49,8 @@ var MetaDataMaterial = function (exports) {
             fragmentShader: MetadataMaterialFragmentShader,
             depthTest: true,
             depthWrite: true,
-            transparent: true
+            transparent: true,
+            side: THREE.DoubleSide
         });
 
     };

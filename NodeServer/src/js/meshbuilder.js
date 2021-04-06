@@ -1,4 +1,4 @@
-import * as THREE from './libs/three.module.js';
+import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
 import { def } from './def.js';
 var MeshBuilder = function (jsonData, materials, scene) {
     const sprite = { width: def.spriteWidth, height: def.spriteHeight }; //{ width: 150, height: 150 };
@@ -17,7 +17,13 @@ var MeshBuilder = function (jsonData, materials, scene) {
                         name: coords.img,
                         pivot: coords.pivot,
                         category: coords.class,
-                        path: coords.filepath
+                        path: coords.filepath,
+                        location: coords.location,
+                        "category classification %": coords["category classification %"],
+                        "category (2)": coords["category (2)"],
+                        "category (2) classification %": coords["category (2) classification %"],
+                        "category (3)": coords["category (3)"],
+                        "category (3) classification %": coords["category (3) classification %"]
                     });
                     geometry = updateVertices(geometry, coords);
                     geometry = updateFaces(geometry);
@@ -41,7 +47,7 @@ var MeshBuilder = function (jsonData, materials, scene) {
         var geometry = new THREE.BufferGeometry().fromGeometry(geometry);
         var mesh = new THREE.Mesh(geometry, material);
         mesh.name = '' + index;
-        mesh.position.set(0, 0, 0)
+        mesh.position.set(0, 0, 0);
         scene.add(mesh);
         return mesh;
     }
@@ -121,7 +127,6 @@ var MeshBuilder = function (jsonData, materials, scene) {
 
         return geometry;
     }
-
     main();
 }
 

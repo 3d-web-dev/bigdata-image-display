@@ -7,7 +7,7 @@ body {
 }
 
 .panel {
-    background-color: #193f5f;
+    background-color: #ece7e7;
     color: white;
 }
 
@@ -17,7 +17,7 @@ body {
     position: absolute;
     font-size: 12pt;
     color: rgb(255, 255, 255);
-    background-color: rgba(38, 57, 61, 0.8);
+    background-color: #193f5f;
     box-sizing: content-box;
     border-radius: 20px;
     padding: 10px;
@@ -58,3 +58,18 @@ body {
     outline: none;
   }
   
+  .title{
+    background-color: #762a83;  
+    font-size: 25px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+
+  }
+
+  .form-check-input {
+    transform: scale(2);
+  }
+  .form-check-label{
+      font-size: 20px;
+  }

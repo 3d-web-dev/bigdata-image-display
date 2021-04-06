@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -17,48 +18,60 @@
             <div id='canvas'></div>
         </div>
         <div class='col-sm-2 p-0 panel'>
-            <div class='container pt-2'>
-                <h4>Mouse Guide</h4>
-                &#128433; MLB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROTATE<br />
-                &#128433; MRB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PAN<br />
-                &#128433; MMB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZOOM <br />
-                &#128433; MLB+Shift: &nbsp;&nbsp;SELECT<br />
-                &#128433; Drag+Alt: &nbsp;&nbsp;&nbsp;&nbsp;SELECT AREA <br />
-                &#128433; MLB+Ctrl: &nbsp;&nbsp;&nbsp;&nbsp;MOVE<br />
-                <button type="button" id='homeBtn' class="btn btn-primary btn-sm col-12 mt-2">Home View</button>
-            </div>
 
-            <div class='container pt-2'>
-                <div class="form-group">
-                    <label for="tag1">Category: </label>
-                    <select id='tag1' class='form-control'>
-                        <option value="-3" selected></option>
-                        <option value="-1">None</option>
-                        <option value="-2">Select All</option>
-                    </select>
+            <div class='container px-0 py-0'>
+                <div class='title px-3 py-2'>
 
-                    <button type="button" id='addBtn' class="btn btn-info col-12 mt-3 btn-sm" data-toggle="modal"
-                        data-target="#categoryModal" data-whatever="@mdo">Add Category</button>
+                    <span>Mouse Guide</span>
+                    <a data-toggle="collapse" href="#mouseGuideCollapse" role="button" aria-expanded="false"
+                        aria-controls="mouseGuideCollapse">
+                        <i id='collapseIcon' class="fa fa-plus-square-o" style="color:white"></i>
+                    </a>
+                </div>
+
+                <div class="collapse" id="mouseGuideCollapse" style="color:black">
+                    &#128433; MLB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROTATE<br />
+                    &#128433; MRB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PAN<br />
+                    &#128433; MMB: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZOOM <br />
+                    &#128433; MLB+Shift: &nbsp;&nbsp;SELECT<br />
+                    &#128433; Drag+Alt: &nbsp;&nbsp;&nbsp;&nbsp;SELECT AREA <br />
+                    &#128433; MLB+Ctrl: &nbsp;&nbsp;&nbsp;&nbsp;MOVE<br />
+                    <button type="button" id='homeBtn' class="btn btn-primary btn-sm col-12 mt-2 mb-2">Home
+                        View</button>
                 </div>
             </div>
 
-            <div class='container pt-2'>
-                <h4 style='text-align: center;'>Selected</h4>
-                <div class='container' style='border: 1px solid rgb(153, 149, 149);'>
-            
-                    <div class="form-group">
-                        <label for="tag2">Category: </label>
-                        <select id='tag2' class='form-control'>
-                            <option value="-1" selected></option>
-                        </select>
-                    </div>
-                    <button type="button" id="multipleBtn" class="btn btn-primary mb-2 col-12 btn-sm">Update
-                        Category</button>
+
+            <div class='container px-0 pt-3'>
+                <div class='title px-3 py-2'>AI Tags</div>
+
+                <div class="form-group mt-2" id='aiTagDiv' style="color:black;">
                 </div>
             </div>
 
-            <div class="container">
-                <button type='button' id="extractBtn" class='btn btn-success mt-4 col-12'>Extract JSON</button>
+
+            <div class='container px-0 pt-3'>
+                <div class='title px-3 py-2'>User Tags</div>
+
+                <div class="form-group mt-2" id='userTagDiv' style="color:black;">
+                </div>
+            </div>
+
+
+            <div class="container px-0 pt-3">
+
+                <button type="button" class="btn btn-info col-12 mt-3 btn-sm" data-toggle="modal"
+                    data-target="#categoryModal" data-whatever="@mdo" id='addBtn'>
+
+                    Create New Tag
+                </button>
+
+
+                <button type='button' class='btn btn-success mt-2 col-12' id="assignBtn">Assign Tag</button>
+
+                <button type='button' class='btn btn-success mt-2 col-12' id="removeBtn">Remove Tag</button>
+
+                <!-- <button type='button' class='btn btn-success mt-4 col-12' id="extractBtn">Extract JSON</button> -->
             </div>
         </div>
 
@@ -114,7 +127,7 @@
                         <form>
                             <div class="form-group">
                                 <label for="recipient-name" class="col-form-label">Category:</label>
-                                <input type="text" class="form-control" id="newCategory">
+                                <input type="text" class="form-control" id="newCategory" maxlength="18">
                             </div>
                         </form>
                     </div>
@@ -132,7 +145,7 @@
             var print = s => { }// console.log.bind(console, '*<3uj: ')
         </script>
 
-        <script type="module" src="src/main.js"></script>
+        <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

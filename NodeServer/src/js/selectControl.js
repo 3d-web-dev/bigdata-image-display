@@ -1,7 +1,7 @@
-import * as THREE from './libs/three.module.js';
+import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
 import MetaDataMaterial from './materials/metadata_material.js';
-import { SelectionBox } from './libs/SelectionBox.js';
-import { SelectionHelper } from './libs/SelectionHelper.js';
+import { SelectionBox } from 'https://unpkg.com/three@0.124.0/examples/jsm/interactive/SelectionBox.js';
+import { SelectionHelper } from 'https://unpkg.com/three@0.124.0/examples/jsm/interactive/SelectionHelper.js';
 import Utils from './utils.js';
 import { def } from './def.js';
 
@@ -50,7 +50,7 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
 
             /* Press Ctrl To Move */
             if (intersectNow && event.ctrlKey) {
-                Utils.moveCamera(imageNameLists[this.getIndex().imgIndex][this.getIndex().spriteIndex]['pivot'], 600, camera, controls);
+                Utils.moveCamera(imageNameLists[this.getIndex().imgIndex][this.getIndex().spriteIndex]['pivot'], 300, camera, controls);
             }
             /* Perss Alt Select Region */
             if (event.altKey) {
@@ -60,7 +60,9 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
         });
 
         var timeout;
+
         $('#canvas').on('pointermove', event => {
+
             $('#description').css('display', 'none');
 
             intersectNow = null;
@@ -79,18 +81,25 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
             timeout = setTimeout(() => {
                 if (intersectNow) {
                     $('#description').css('display', 'block')
-                    $('#description').css('left', event.clientX + 20 + 'px');
-                    $('#description').css('top', event.clientY + 20 + 'px');
+                    $('#description').css('left', event.clientX + 10 + 'px');
+                    $('#description').css('top', event.clientY + 10 + 'px');
                     var selectedImage = imageNameLists[this.getIndex().imgIndex][this.getIndex().spriteIndex];
                     $('#description-content').html(
                         'Name: ' + selectedImage.name +
-                        '<br/> Class: ' + selectedImage.category +
+                        '<br/> class: ' + selectedImage.category +
+                        '<br/> location: ' + selectedImage.location +
+                        '<br/> category classification %: ' + selectedImage["category classification %"] +
+                        '<br/> category (2): ' + selectedImage["category (2)"] +
+                        '<br/> category (2) classification %: ' + selectedImage["category (2) classification %"] +
+                        '<br/> category (3): ' + selectedImage["category (3)"] +
+                        '<br/> category (3) classification %: ' + selectedImage["category (3) classification %"] +
                         // '<br/> UV: ' + intersectNow.uv.x.toFixed(2) + ', ' + intersectNow.uv.y.toFixed(2) +
                         // '<br/>Pos: ' + (parseInt(this.getIndex().imgIndex) + 1) + 'th ' + this.getIndex().spriteIndex +
                         '<br/>Press Space key for blowing up this image.');
                 }
-            }, 100);
+            }, 1000);
         });
+
 
         /* Detect Images Inside SelectionBox */
         $('#canvas').on('pointerup', event => {
@@ -122,7 +131,8 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                 let image = imageNameLists[this.getIndex().imgIndex][this.getIndex().spriteIndex];
                 $('#imgModal').modal('toggle');
                 $('#imgModal').modal('show');
-                $('#modalImageName').name = image.name;
+                $('#modalImageName').html(image.name);
+                console.log('awef', image.name)
                 // $('#blowup').attr("src", "src/input/images/0.jpg");
                 $('#blowup').attr("src", image.path);
             }
@@ -136,13 +146,14 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
             const showInfo = (txt) => {
                 setTimeout(() => { alert(txt) }, 500)
             }
+
             chosenImages.forEach((e) => {
                 if (e.length > 0) multipleStatus = true;
             })
 
             if (multipleStatus) {
                 console.log(category)
-                if (category > 0) {
+                if (category > -1) {
                     showInfo('Successfully Updated');
                     chosenImages.forEach((chImg, id) => {
                         chImg.forEach(idx => {
@@ -235,12 +246,33 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
         }
     }
 
-    this.selectCategory = function (categoryName) {
+    this.selectCategory = function (categoryNames) {
         let status = false;
         for (var i = 0; i < def.numOfImages; ++i) {
             chosenImages[i] = [];
             imageNameLists[i].forEach((imgNameList, index) => {
-                if (imgNameList.category === categoryName)
+                if (categoryNames.includes(imgNameList.category))
+                    chosenImages[i].push(index);
+            });
+            if (chosenImages[i].length > 0) status = true;
+        }
+
+        if (status) {
+            selectImages();
+            lastSelectedIndex = null;
+        }
+        else {
+            print('There is no images in this category');
+            this.unselectAll();
+        }
+    }
+
+    this.selectLocation = function (locationNames) {
+        let status = false;
+        for (var i = 0; i < def.numOfImages; ++i) {
+            chosenImages[i] = [];
+            imageNameLists[i].forEach((imgNameList, index) => {
+                if (locationNames.includes(imgNameList.location))
                     chosenImages[i].push(index);
             });
             if (chosenImages[i].length > 0) status = true;
@@ -250,7 +282,7 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
             lastSelectedIndex = null;
         }
         else {
-            print('There is no images in this category');
+            print('There is no images in this location');
             this.unselectAll();
         }
     }
