@@ -8,7 +8,6 @@ import { def } from './def.js';
 
 const camInitPos = new THREE.Vector3(0, 0, 100000);
 const container = document.getElementById('canvas');
-
 var scene, camera, renderer, controls;
 
 def.numOfImages = document.getElementById('numOfFiles').value
@@ -39,7 +38,7 @@ const App = () => {
     camera = buildCamera();
     renderer = buildRenderer();
 
-    renderer.domElement.style.padding = '5px';
+    renderer.domElement.style.padding = '3px';
 
     const light = new THREE.PointLight(0xffffff, 1, 0);
     light.position.set(1, 1, 100);
@@ -62,16 +61,24 @@ const App = () => {
         })
     )
 
+    // Load Input Images && Initialize Def.js
     for (var i = 0; i < def.numOfImages; i++) {
+
         const idx = i;
-        const texture1 = MetaDataMaterial.getTexture([]);
+        def.images.push([]);
+
         myPromises.push(
             new Promise(resolve => { new THREE.TextureLoader().load('input/images/' + i + '.jpg', resolve) }).then(texture => {
-                def.imageHeight = texture.image.height;
-                def.imageWidth = texture.image.width;
-                def['rows'] = def.imageHeight / def.spriteHeight;
-                def['cols'] = def.imageWidth / def.spriteWidth;
-                def['borderThickness'] = def.spriteWidth / 25;
+
+                def.images[idx] = {
+                    imageWidth: texture.image.width,
+                    imageHeight: texture.image.height,
+                    rows: texture.image.height / def.spriteHeight,
+                    cols: texture.image.width / def.spriteWidth
+                }
+
+                def['borderThickness'] = def.spriteWidth / 20;
+                const texture1 = MetaDataMaterial.getTexture([], idx);
                 materials[idx] = MetaDataMaterial.getMaterial(texture, texture1);
             })
         );
@@ -91,23 +98,25 @@ const App = () => {
     }
     animate();
 
-    /* Start App */
+    // Start App
     Promise.all(myPromises).then(() => {
+
+        let checkedAssignUserTagNames = [];
 
         const meshBuilder = new MeshBuilder(jsonData, materials, scene);
 
-        // Utils.moveHome(meshBuilder.getMeshes(), camera, controls);
+        Utils.moveHome(meshBuilder.getMeshes(), camera, controls);
 
-
-        let category = Utils.getCategory(jsonData).category;
-        let location = Utils.getCategory(jsonData).location;
+        const analyzedData = Utils.getCategory(jsonData);
+        let category = analyzedData.category;
+        let location = analyzedData.location;
 
         let categoryNames = Object.keys(category);
         let locationNames = Object.keys(location);
 
         const sc = new SelectControl(scene, camera, renderer, controls, meshBuilder, categoryNames);
 
-        /* AI Tages */
+        // AI Tages
         categoryNames.forEach((txt, index) => {
             $('#aiTagDiv').append(`
                 <div class="form-check ml-3">
@@ -130,31 +139,57 @@ const App = () => {
         });
 
 
-        /* User Tags */
+        // User Tags
         locationNames.forEach((txt, index) => {
+            const id = txt.replace(/\s/g, '');
+
             $('#userTagDiv').append(`
                 <div class="form-check ml-3">
                     <input class="form-check-input mt-3" type="checkbox"
-                        id="${txt}" value="${index}" />
-                    <label class="form-check-label pt-2 pl-2" for="${txt}">
+                        id="${id}" value="${index}" />
+                    <label class="form-check-label pt-2 pl-2" for="${id}">
                         ${txt}
                     </label>
                 </div>
             `);
 
-            $(`#${txt}`).click(() => {
+            $(`#${id}`).click(() => {
                 let checkedUserTagNames = [];
                 locationNames.forEach(v => {
-                    if ($(`#${v}`).prop('checked'))
+                    if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
                         checkedUserTagNames.push(v);
                 });
                 sc.selectLocation(checkedUserTagNames);
             });
+
+
+            // Assign-UserTag-Window Checkboxes
+            $('#assignUserTagDiv').append(`
+                <div class="form-check ml-3">
+                    <input class="form-check-input mt-3" type="checkbox"
+                        id="assign_${id}" value="${index}" />
+                    <label class="form-check-label pt-2 pl-2" for="assign_${id}">
+                        ${txt}
+                    </label>
+                </div>
+            `);
+
+            $(`#assign_${id}`).click(() => {
+                checkedAssignUserTagNames = [];
+                locationNames.forEach(v => {
+                    if ($(`#assign_${v.replace(/\s/g, '')}`).prop('checked'))
+                        checkedAssignUserTagNames.push(v);
+                });
+            });
         });
 
 
+        // Home Button Click
+        $('#homeBtn').click(() => {
+            Utils.moveHome(meshBuilder.getMeshes(), camera, controls);
+        })
 
-        /* Add New Category Name */
+        // Create New Tag Button Click
         $('#addBtn').click(() => { $('#newCategory').val('') });
 
         $('#addCategoryBtn').click(() => {
@@ -162,30 +197,95 @@ const App = () => {
 
             if (newLocation !== '') {
                 var index = locationNames.length;
+                var id = newLocation.replace(/\s/g, '');
+
+                locationNames.push(newLocation);
+                location[newLocation] = [];
 
                 $('#userTagDiv').append(`
                     <div class="form-check ml-3">
                         <input class="form-check-input mt-3" type="checkbox"
-                            id="${newLocation}" value="${index}" />
-                        <label class="form-check-label pt-1 pl-2" for="${newLocation}">
+                            id="${id}" value="${index}" />
+                        <label class="form-check-label pt-1 pl-2" for="${id}">
                             ${newLocation}
                         </label>
                     </div>
                 `);
+                $(`#${id}`).click(() => {
+                    let checkedUserTagNames = [];
+                    locationNames.forEach(v => {
+                        if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
+                            checkedUserTagNames.push(v);
+                    });
+                    sc.selectLocation(checkedUserTagNames);
+                });
 
-                locationNames.push(newLocation);
-                location[newLocation] = [];
+
+                $('#assignUserTagDiv').append(`
+                    <div class="form-check ml-3">
+                        <input class="form-check-input mt-3" type="checkbox"
+                            id="assign_${id}" value="${index}" />
+                        <label class="form-check-label pt-2 pl-2" for="assign_${id}">
+                            ${newLocation}
+                        </label>
+                    </div>
+                `);
+                $(`#assign_${id}`).click(() => {
+                    checkedAssignUserTagNames = [];
+                    locationNames.forEach(v => {
+                        if ($(`#assign_${v.replace(/\s/g, '')}`).prop('checked'))
+                            checkedAssignUserTagNames.push(v);
+                    });
+                });
+
+
+
             } else {
-                setTimeout(() => { alert('No Category is added') }, 500)
+                setTimeout(() => { alert('No Tag is added. Please Input Tag Name.') }, 500)
+            }
+        });
+
+        //Asign Tag Button Click
+
+        // Initialize Checkboxes In Assign User Tags Window
+        $('#assignBtn').click(() => {
+            locationNames.forEach(v => {
+                $(`#assign_${v.replace(/\s/g, '')}`).prop('checked', false);
+            });
+        });
+
+        // Final Assign Tag Button Click Event In AssignUserTag-Window
+        $('#assignTagBtn').click(() => {
+            const status = sc.assignTags(checkedAssignUserTagNames);
+            if (status) {
+                locationNames.forEach(v => {
+                    $(`#${v.replace(/\s/g, '')}`).prop('checked', false);
+                });
             }
         });
 
 
+        // Remove Tag Button Click
+        $('#removeBtn').click(() => {
+            let checkedUserTagNames = [];
+            locationNames.forEach(tagName => {
+                const id = tagName.replace(/\s/g, '');
+                if ($(`#${id}`).prop('checked')) {
+                    checkedUserTagNames.push(tagName);
+                    $(`#${id}`).remove();
+                    $(`label[for=${id}]`).remove();
 
-        $('#homeBtn').click(() => {
+                    $(`#assign_${id}`).remove();
+                    $(`label[for=assign_${id}]`).remove();
+                }
+            });
 
-            Utils.moveHome(meshBuilder.getMeshes(), camera, controls);
-        })
+            sc.removeTags(checkedUserTagNames);
+            sc.unselectAll();
+        });
+
+
+
     })
 }
 
@@ -200,3 +300,4 @@ $('#mouseGuideCollapse').on('hidden.bs.collapse', function () {
 
 
 App();
+

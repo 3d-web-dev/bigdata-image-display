@@ -13,7 +13,6 @@ var MetaDataMaterial = function (exports) {
 
     var MetadataMaterialFragmentShader = `
         precision highp float;
-        #define t 0.001 //borderThickness
         #define borderColor 0.992, 0.553, 0.235
         uniform sampler2D map;
         uniform sampler2D map1;
@@ -55,19 +54,19 @@ var MetaDataMaterial = function (exports) {
 
     };
 
-    exports.getTexture = function (chImg) {
+    exports.getTexture = function (chImg, idx) {
         var canvas = document.createElement("CANVAS");
         var ctx = canvas.getContext('2d');
-        ctx.canvas.width = def.imageWidth;
-        ctx.canvas.height = def.imageHeight;
+        ctx.canvas.width = def.images[idx].imageWidth;
+        ctx.canvas.height = def.images[idx].imageHeight;
 
-        /* Background is White */
-        drawRect(ctx, "#000000", 0, 0, def.imageWidth, def.imageHeight)
+        /* Background is Black */
+        drawRect(ctx, "#000000", 0, 0, def.images[idx].imageWidth, def.images[idx].imageHeight);
 
         /* Selected Image Color Settings */
         chImg.forEach((n, i) => {
-            var x = (n % def.cols) * def.spriteWidth;
-            var y = (Math.floor(n / def.cols)) * def.spriteHeight;
+            var x = (n % def.images[idx].cols) * def.spriteWidth;
+            var y = (Math.floor(n / def.images[idx].cols)) * def.spriteHeight;
             /* Draw Main Area */
             drawRect(ctx, '#FF0000', x, y, def.spriteWidth, def.spriteHeight);
 

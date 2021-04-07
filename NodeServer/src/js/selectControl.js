@@ -31,21 +31,14 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
 
         $('#canvas').on('pointerdown', event => {
             selectionBox.startPoint.set(this.mouse.x, this.mouse.y, 0.5);
-            $('#imgName').val('');
-            $('#tag2').val('-1');
-
             var selectedIndex = this.getIndex();
+
             /* Press Shift To Select Image Face */
             if (event.shiftKey && selectedIndex) {
                 lastSelectedIndex = selectedIndex;
-                $('#tag1').val('-3');
+
                 this.checkIndex(selectedIndex);
                 selectImages();
-                var selectedImage = imageNameLists[selectedIndex.imgIndex][selectedIndex.spriteIndex];
-                var indexOfSelected = categoryNames.indexOf(selectedImage.category);
-                $('#imgName').val(selectedImage.name);
-                $('#tag2').val(`${indexOfSelected}`);
-                $('#tag2').prop('disabled', false);
             }
 
             /* Press Ctrl To Move */
@@ -72,9 +65,18 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
 
             this.raycaster.setFromCamera(this.mouse, camera);
             const intersects = this.raycaster.intersectObjects(scene.children);
+            let detected = false;
+            let j = 0;
+            while (j < intersects.length) {
+                if (intersects[j].object.isMesh) {
+                    detected = true;
+                    break;
+                }
+                ++j;
+            }
 
-            if (intersects.length > 0 && !event.altKey) {
-                intersectNow = intersects[0];
+            if (detected && !event.altKey) {
+                intersectNow = intersects[j];
             }
 
             clearTimeout(timeout);
@@ -87,7 +89,7 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                     $('#description-content').html(
                         'Name: ' + selectedImage.name +
                         '<br/> class: ' + selectedImage.category +
-                        '<br/> location: ' + selectedImage.location +
+                        '<br/> user_tags: ' + selectedImage.user_tags +
                         '<br/> category classification %: ' + selectedImage["category classification %"] +
                         '<br/> category (2): ' + selectedImage["category (2)"] +
                         '<br/> category (2) classification %: ' + selectedImage["category (2) classification %"] +
@@ -95,9 +97,9 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                         '<br/> category (3) classification %: ' + selectedImage["category (3) classification %"] +
                         // '<br/> UV: ' + intersectNow.uv.x.toFixed(2) + ', ' + intersectNow.uv.y.toFixed(2) +
                         // '<br/>Pos: ' + (parseInt(this.getIndex().imgIndex) + 1) + 'th ' + this.getIndex().spriteIndex +
-                        '<br/>Press Space key for blowing up this image.');
+                        '<br/>Press Enter key for blowing up this image.');
                 }
-            }, 1000);
+            }, 500);
         });
 
 
@@ -107,7 +109,6 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
             controls.enabled = true;
             helper.element.style.display = 'none';
             if (event.altKey) {
-                $('#tag1').val('-3');
                 const s = selectionBox.startPoint;
                 const e = selectionBox.endPoint;
                 var start = new THREE.Vector2(Math.min(s.x, e.x), Math.max(s.y, e.y));
@@ -117,56 +118,27 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                     imageNameList.forEach((e, j) => {
                         var pt = e.pivot.clone().project(camera);
                         if (start.x < pt.x && pt.x < end.x && start.y > pt.y && pt.y > end.y) {
-                            chosenImages[i].push(j);
+                            if (!chosenImages[i].includes(j))
+                                chosenImages[i].push(j);
                         }
                     })
                 })
+                selectImages();
             }
-            selectImages();
         });
 
-        /* Space Key For Blowing Up Image */
+
+        /* Enter Key For Blowing Up Image */
         $(document).on('keydown', (event) => {
-            if (event.code === 'Space' && intersectNow) {
+            if (event.code === 'Enter' && intersectNow) {
                 let image = imageNameLists[this.getIndex().imgIndex][this.getIndex().spriteIndex];
                 $('#imgModal').modal('toggle');
                 $('#imgModal').modal('show');
                 $('#modalImageName').html(image.name);
-                console.log('awef', image.name)
-                // $('#blowup').attr("src", "src/input/images/0.jpg");
                 $('#blowup').attr("src", image.path);
             }
-
         });
 
-        /* Change ImageName And Category */
-        $('#multipleBtn').click(() => {
-            var multipleStatus = false;
-            const category = parseInt($('#tag2').val());
-            const showInfo = (txt) => {
-                setTimeout(() => { alert(txt) }, 500)
-            }
-
-            chosenImages.forEach((e) => {
-                if (e.length > 0) multipleStatus = true;
-            })
-
-            if (multipleStatus) {
-                console.log(category)
-                if (category > -1) {
-                    showInfo('Successfully Updated');
-                    chosenImages.forEach((chImg, id) => {
-                        chImg.forEach(idx => {
-                            imageNameLists[id][idx].category = categoryNames[category];
-                        });
-                    });
-                } else {
-                    showInfo('Please select category.')
-                }
-            } else {
-                showInfo('Please select at least one image');
-            }
-        });
 
         /* Export as TXT file */
         $('#extractBtn').click(() => {
@@ -174,15 +146,16 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
             var check = false;
             var idxList = [];
             var dataToExtract = '';
-            chosenImages.forEach(ele => {
-                if (ele.length > 0) check = true;
-                ele.forEach(id => { idxList.push(id) });
+            chosenImages.forEach((chImg, index) => {
+                if (chImg.length > 0) check = true;
+                chImg.forEach(id => { idxList.push({ i: index, j: id }) });
             });
+
             if (check) {
                 dataToExtract += '[\n';
-                idxList.forEach(id => {
-                    const i = Math.floor(id / len);
-                    const j = id % len;
+                idxList.forEach(ele => {
+                    const i = ele.i
+                    const j = ele.j;
                     dataToExtract +=
                         '\t{\n\t\tname: ' + imageNameLists[i][j].name +
                         ',\n\t\tclass: ' + imageNameLists[i][j].category +
@@ -200,20 +173,20 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
 
 
     this.getIndex = function () {
+
         if (intersectNow) {
             const imageNum = parseInt(intersectNow.object.name);
-            const faceIndex = intersectNow.faceIndex;
-            const index = Math.floor(faceIndex / 2);
+            const index = Math.floor(intersectNow.faceIndex / 2);
             return { imgIndex: imageNum, spriteIndex: index };
+
         } else {
-            print('No Image Raycasted.');
             intersectNow = null;
             lastSelectedIndex = null;
             return null;
         }
     }
 
-    this.checkIndex = index => { /* index = [imgIndex, spriteIndex] */
+    this.checkIndex = index => { /* index = {imgIndex:, spriteIndex:} */
         let existIndex = null;
         chosenImages.forEach((ele, imgIndex) => {
             ele.forEach((spriteIndex) => {
@@ -241,29 +214,60 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
             const texture = meshes[i].material.uniforms.map.value;
             meshes[i].material.dispose();
 
-            var texture1 = MetaDataMaterial.getTexture(chosenImages[i]);
+            var texture1 = MetaDataMaterial.getTexture(chosenImages[i], i);
             meshes[i].material = MetaDataMaterial.getMaterial(texture, texture1);
         }
     }
 
+
+    this.assignTags = function (tagNames) {
+        let updateStatus = false;
+        chosenImages.forEach((chImg, id) => {
+            chImg.forEach(idx => {
+                imageNameLists[id][idx].user_tags = tagNames;
+                updateStatus = true;
+            });
+        });
+
+        if (updateStatus && tagNames.length > 0) {
+            alert('Successfully Updated.');
+            return true;
+        } else if (tagNames.length === 0) {
+            alert("You didn't choose any user tags. Please try again.");
+            return false;
+        } else {
+            alert('No Images Selected. Please try again.');
+            return false;
+        }
+    }
+
+    this.removeTags = function (tagNames) {
+        imageNameLists.forEach(imgNameList => {
+            imgNameList.forEach(img => {
+                tagNames.forEach(tagName => {
+                    img.user_tags = img.user_tags.filter((value, index, arr) => {
+                        return value !== tagName;
+                    });
+                });
+            });
+        });
+    }
+
+
+
     this.selectCategory = function (categoryNames) {
-        let status = false;
+
         for (var i = 0; i < def.numOfImages; ++i) {
             chosenImages[i] = [];
             imageNameLists[i].forEach((imgNameList, index) => {
-                if (categoryNames.includes(imgNameList.category))
-                    chosenImages[i].push(index);
+                if (categoryNames.includes(imgNameList.category)) {
+                    if (imgNameList.sprite)
+                        imgNameList.sprite.visible = true;
+                } else {
+                    if (imgNameList.sprite)
+                        imgNameList.sprite.visible = false;
+                }
             });
-            if (chosenImages[i].length > 0) status = true;
-        }
-
-        if (status) {
-            selectImages();
-            lastSelectedIndex = null;
-        }
-        else {
-            print('There is no images in this category');
-            this.unselectAll();
         }
     }
 
@@ -272,11 +276,27 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
         for (var i = 0; i < def.numOfImages; ++i) {
             chosenImages[i] = [];
             imageNameLists[i].forEach((imgNameList, index) => {
-                if (locationNames.includes(imgNameList.location))
+
+                let isIncluded = false;
+                let j = 0;
+
+                while (j < imgNameList.user_tags.length) {
+
+                    const tag = imgNameList.user_tags[j];
+
+                    if (locationNames.includes(tag)) {
+                        isIncluded = true;
+                        break;
+                    }
+                    ++j;
+                }
+
+                if (isIncluded)
                     chosenImages[i].push(index);
             });
             if (chosenImages[i].length > 0) status = true;
         }
+
         if (status) {
             selectImages();
             lastSelectedIndex = null;

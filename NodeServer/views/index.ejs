@@ -14,11 +14,20 @@
 
 <body>
     <div class="row p-0 m-0">
+
+        <!-- Canvas -->
         <div class="col-sm-10 p-0">
             <div id='canvas'></div>
+            <div class='loader' id='loader'>
+                <div class='loader-text' id='loaderInfo'>Loading...</div>
+                <div class='loader-spinner'></div>
+            </div>
         </div>
-        <div class='col-sm-2 p-0 panel'>
 
+        <!-- Control Panel -->
+        <div class='col-sm-2 p-2 panel'>
+
+            <!-- Mouse Guide Section -->
             <div class='container px-0 py-0'>
                 <div class='title px-3 py-2'>
 
@@ -41,38 +50,50 @@
                 </div>
             </div>
 
-
-            <div class='container px-0 pt-3'>
+            <!-- AI Tag Section -->
+            <div class='container px-0 pt-3' style='background-color:white ;'>
                 <div class='title px-3 py-2'>AI Tags</div>
 
                 <div class="form-group mt-2" id='aiTagDiv' style="color:black;">
-                </div>
+                    <!-- AI Tags Here -->
+                </div><br />
+
             </div>
 
 
-            <div class='container px-0 pt-3'>
+            <!-- User Tag Section -->
+            <div class='container px-0 pt-3' style='background-color:white ;'>
                 <div class='title px-3 py-2'>User Tags</div>
 
                 <div class="form-group mt-2" id='userTagDiv' style="color:black;">
-                </div>
+                    <!-- User Tags Here -->
+                </div><br />
             </div>
 
 
+            <!-- Buttons -->
             <div class="container px-0 pt-3">
 
                 <button type="button" class="btn btn-info col-12 mt-3 btn-sm" data-toggle="modal"
                     data-target="#categoryModal" data-whatever="@mdo" id='addBtn'>
-
                     Create New Tag
                 </button>
 
+                <button type='button' class='btn btn-success mt-2 col-12' data-toggle="modal"
+                    data-target="#assignTagModal1" data-whatever="@mdo" id="assignBtn">
+                    Assign Tag
+                </button>
 
-                <button type='button' class='btn btn-success mt-2 col-12' id="assignBtn">Assign Tag</button>
+                <button type='button' class='btn btn-success mt-2 col-12' id="removeBtn">
+                    Remove Tag
+                </button>
 
-                <button type='button' class='btn btn-success mt-2 col-12' id="removeBtn">Remove Tag</button>
+                <button type='button' class='btn btn-success mt-2 col-12' id="extractBtn">
+                    Extract JSON
+                </button>
 
-                <!-- <button type='button' class='btn btn-success mt-4 col-12' id="extractBtn">Extract JSON</button> -->
             </div>
+
         </div>
 
 
@@ -112,33 +133,94 @@
             <!--Modal: Image Blow Up-->
         </div>
 
-
+        <!-- modal for Create New Tag -->
         <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <!-- <div class="modal-header">
                         <h5 class="modal-title" id="categoryModalLabel">Please input a new category name</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                    </div>
+                    </div> -->
+                    <div class="title py-2 px-4" style="color:white">
+                        Create New Tag
+                    </div><br />
+
                     <div class="modal-body">
                         <form>
                             <div class="form-group">
-                                <label for="recipient-name" class="col-form-label">Category:</label>
+                                <label for="recipient-name" class="col-form-label"
+                                    style='font-size: 20px;'>Category:</label>
                                 <input type="text" class="form-control" id="newCategory" maxlength="18">
                             </div>
                         </form>
                     </div>
-                    <div class="modal-footer">
+                    <br />
+                    <div class='row'>
                         <button type="button" id='addCategoryBtn' data-dismiss="modal"
-                            class="btn btn-primary">Add</button>
+                            class="btn btn-primary col-4 offset-1">Add</button>
+                        <button type="button" class="btn btn-primary col-4 offset-1" data-dismiss="modal">
+                            Cancel
+                        </button>
+
                     </div>
+                    <br />
                 </div>
             </div>
         </div>
+
+
+        <!-- 1st modal for Assign Tag -->
+        <div class="modal fade" id="assignTagModal1" tabindex="-1" role="dialog" aria-labelledby="assignTagModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="title py-2 px-4" style="color:white">
+                        Assign Tag
+                    </div><br />
+
+                    <div class="modal-body pt-4">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary col-8 offset-2"
+                            data-toggle="modal" data-target="#assignTagModal2" data-whatever="@mdo"
+                            id='useCurrentSelectionBtn'>Use Current Selection</button>
+
+                        <button type="button" class="btn btn-primary col-8 offset-2 mt-4 mb-4" data-dismiss="modal">
+                            Return to Viewer to Make Selection
+                        </button>
+                    </div><br>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2nd modal for Assign Tag  -->
+        <div class="modal fade" id="assignTagModal2" tabindex="-1" role="dialog" aria-labelledby="assignTagModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="title py-2 px-4" style="color:white">
+                        Assign Tag
+                    </div>
+
+                    <div class="modal-body pt-4">
+                        <span style="font-size: 22px; justify-content: center;display: flex;">Select tags to apply to
+                            selected
+                            images.</span><br>
+
+                        <div id='assignUserTagDiv'>
+                            <!-- Checkboxes Created Here -->
+                        </div>
+
+                        <button type="button" data-dismiss="modal" class="btn btn-primary col-8 offset-2"
+                            id='assignTagBtn'>Assign Tag</button>
+                    </div><br>
+                </div>
+            </div>
+        </div>
+
         <input type='text' value='<%= data %>' id='numOfFiles' hidden />
+
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.4/gsap.min.js"></script>
         <script>

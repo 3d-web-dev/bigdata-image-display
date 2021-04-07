@@ -12,12 +12,16 @@ var Utils = function (exports) {
             if (!category[ele.class]) {
                 category[ele.class] = [];
             }
-            if (!location[ele.location]) {
-                location[ele.location] = [];
-            }
+
+            ele.user_tags.forEach(tag => {
+                if (!location[tag]) {
+                    location[tag] = [];
+                }
+                location[tag].push(index);
+            });
+
             category[ele.class].push(index);
-            location[ele.location].push(index);
-        })
+        });
         return { category: category, location: location };
     }
 
@@ -43,7 +47,6 @@ var Utils = function (exports) {
         });
         const posX = (min.x + max.x) / 2;
         const posY = (min.y + max.y) / 2;
-
         gsap.to(camera.position, { duration: 2, x: posX, y: posY, z: posX * 2.4, });
 
         gsap.to(controls.target, {

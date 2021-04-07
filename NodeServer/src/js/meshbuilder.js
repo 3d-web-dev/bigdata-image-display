@@ -2,7 +2,6 @@ import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
 import { def } from './def.js';
 var MeshBuilder = function (jsonData, materials, scene) {
     const sprite = { width: def.spriteWidth, height: def.spriteHeight }; //{ width: 150, height: 150 };
-    const img = { cols: def.cols, rows: def.rows }; // { width: 1500, height: 40 * 150, cols: 7, rows: 10 };
     var meshes = [];
     var imageNameLists = [];
 
@@ -10,15 +9,26 @@ var MeshBuilder = function (jsonData, materials, scene) {
         for (var i = 0; i < def.numOfImages; i++) {
             var geometry = new THREE.Geometry();
             const imageNameList = [];
-            for (var j = 0; j < img.cols * img.rows; j++) {
+
+            let j = 0;
+            while (j < def.images[i].cols * def.images[i].rows) {
                 var coords = getCoords(i, j);
+
                 if (coords) {
+                    let _sprite = null;
+                    if (!coords.class.includes(' ')) {
+                        _sprite = makeSprite(coords.class[0], coords.pivot);
+                        _sprite.name = i + '_' + j;
+                        _sprite.visible = false;
+                    }
+
                     imageNameList.push({
                         name: coords.img,
                         pivot: coords.pivot,
                         category: coords.class,
                         path: coords.filepath,
-                        location: coords.location,
+                        sprite: _sprite,
+                        user_tags: coords.user_tags,
                         "category classification %": coords["category classification %"],
                         "category (2)": coords["category (2)"],
                         "category (2) classification %": coords["category (2) classification %"],
@@ -27,8 +37,11 @@ var MeshBuilder = function (jsonData, materials, scene) {
                     });
                     geometry = updateVertices(geometry, coords);
                     geometry = updateFaces(geometry);
-                    geometry = updateFaceVertexUvs(geometry, j);
+                    geometry = updateFaceVertexUvs(geometry, i, j);
+                } else {
+                    break;
                 }
+                ++j;
             }
             meshes.push(buildMesh(geometry, materials[i], i));
             imageNameLists.push(imageNameList);
@@ -53,8 +66,13 @@ var MeshBuilder = function (jsonData, materials, scene) {
     }
 
     var getCoords = function (i, j) {
-        var idx = (i * img.rows * img.cols) + j;
-        var coords = jsonData[idx];
+        var total = 0;
+        for (var k = 0; k < i; ++k) {
+            total += def.images[k].rows * def.images[k].cols;
+        }
+
+        var coords = jsonData[total + j];
+
         if (coords) {
             coords.x *= 10000;
             coords.y *= 5000;
@@ -110,24 +128,77 @@ var MeshBuilder = function (jsonData, materials, scene) {
         return geometry;
     }
 
-    var updateFaceVertexUvs = function (geometry, j) {
-        var xOffset = (j % img.cols) * (1 / img.cols);
-        var yOffset = 1 - (Math.floor(j / img.cols) * (1 / img.rows)) - (1 / img.rows);
+    var updateFaceVertexUvs = function (geometry, i, j) {
+        var xOffset = (j % def.images[i].cols) * (1 / def.images[i].cols);
+        var yOffset = 1 - (Math.floor(j / def.images[i].cols) * (1 / def.images[i].rows)) - (1 / def.images[i].rows);
+
         geometry.faceVertexUvs[0].push([
             new THREE.Vector2(xOffset, yOffset),
-            new THREE.Vector2(xOffset + (1 / img.cols), yOffset),
-            new THREE.Vector2(xOffset + (1 / img.cols), yOffset + (1 / img.rows))
+            new THREE.Vector2(xOffset + (1 / def.images[i].cols), yOffset),
+            new THREE.Vector2(xOffset + (1 / def.images[i].cols), yOffset + (1 / def.images[i].rows))
         ]);
 
         geometry.faceVertexUvs[0].push([
             new THREE.Vector2(xOffset, yOffset),
-            new THREE.Vector2(xOffset + (1 / img.cols), yOffset + (1 / img.rows)),
-            new THREE.Vector2(xOffset, yOffset + (1 / img.rows))
+            new THREE.Vector2(xOffset + (1 / def.images[i].cols), yOffset + (1 / def.images[i].rows)),
+            new THREE.Vector2(xOffset, yOffset + (1 / def.images[i].rows))
         ]);
 
         return geometry;
     }
+
+    var makeSprite = function (text, position) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext("2d");
+        const x = 64;
+        const y = 64;
+        const radius = 30;
+        const startAngle = 0;
+        const endAngle = Math.PI * 2;
+
+        ctx.fillStyle = "rgb(0, 0, 0)";
+        ctx.beginPath();
+        ctx.arc(x, y, radius, startAngle, endAngle);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgb(255, 255, 255)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, startAngle, endAngle);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.font = "35px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, x, y);
+
+        const numberTexture = new THREE.CanvasTexture(canvas);
+
+
+        const spriteMaterial = new THREE.SpriteMaterial({
+            map: numberTexture,
+            alphaTest: 0.5,
+            transparent: true,
+            depthTest: false,
+            depthWrite: false,
+            sizeAttenuation: false
+        });
+
+        var _sprite = new THREE.Sprite(spriteMaterial);
+        _sprite.renderOrder = 1;
+        _sprite.position.copy(position);
+        _sprite.scale.set(0.06, 0.06, 1);
+
+        scene.add(_sprite);
+        return _sprite;
+    }
+
+
     main();
+    document.getElementById('loader').style.display = 'none';
 }
 
 export default MeshBuilder;
