@@ -190,7 +190,9 @@ const App = () => {
         })
 
         // Create New Tag Button Click
-        $('#addBtn').click(() => { $('#newCategory').val('') });
+        $('#addBtn').click(() => {
+            $('#newCategory').val('')
+        });
 
         $('#addCategoryBtn').click(() => {
             var newLocation = $('#newCategory').val();
@@ -238,10 +240,10 @@ const App = () => {
                     });
                 });
 
-
-
+                $('#categoryModal').modal('hide');
+                alert('New Tag Successfully Added.');
             } else {
-                setTimeout(() => { alert('No Tag is added. Please Input Tag Name.') }, 500)
+                alert('Please Input New Tag Name.');
             }
         });
 
@@ -284,9 +286,7 @@ const App = () => {
             sc.unselectAll();
         });
 
-
-
-    })
+    });
 }
 
 $('#mouseGuideCollapse').on('shown.bs.collapse', function () {

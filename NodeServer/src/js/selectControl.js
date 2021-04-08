@@ -169,6 +169,24 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                 alert("There is no selected images.\nPlease select images")
             }
         });
+
+        $('#useCurrentSelectionBtn').click(() => {
+            let selectionStatus = false;
+            let j = 0;
+            while (j < chosenImages.length) {
+                if (chosenImages[j].length > 0) {
+                    selectionStatus = true;
+                    break;
+                }
+                j++;
+            }
+            if (selectionStatus) {
+                $('#assignTagModal1').modal('hide');
+                $('#assignTagModal2').modal('show');
+            } else {
+                alert('There is No Selection Now.');
+            }
+        });
     }
 
 
@@ -230,7 +248,8 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
         });
 
         if (updateStatus && tagNames.length > 0) {
-            alert('Successfully Updated.');
+            alert('Successfully Assigned.');
+            $('#assignTagModal2').modal('hide');
             return true;
         } else if (tagNames.length === 0) {
             alert("You didn't choose any user tags. Please try again.");
@@ -242,15 +261,21 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
     }
 
     this.removeTags = function (tagNames) {
-        imageNameLists.forEach(imgNameList => {
-            imgNameList.forEach(img => {
-                tagNames.forEach(tagName => {
-                    img.user_tags = img.user_tags.filter((value, index, arr) => {
-                        return value !== tagName;
+
+        if (tagNames.length === 0) {
+            alert('Please Select Tags To Remove');
+        } else {
+            alert('Successfully Removed!');
+            imageNameLists.forEach(imgNameList => {
+                imgNameList.forEach(img => {
+                    tagNames.forEach(tagName => {
+                        img.user_tags = img.user_tags.filter((value, index, arr) => {
+                            return value !== tagName;
+                        });
                     });
                 });
             });
-        });
+        }
     }
 
 

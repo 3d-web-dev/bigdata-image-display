@@ -1,5 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
 import { def } from './def.js';
+
 var MeshBuilder = function (jsonData, materials, scene) {
     const sprite = { width: def.spriteWidth, height: def.spriteHeight }; //{ width: 150, height: 150 };
     var meshes = [];
@@ -190,7 +191,7 @@ var MeshBuilder = function (jsonData, materials, scene) {
         var _sprite = new THREE.Sprite(spriteMaterial);
         _sprite.renderOrder = 1;
         _sprite.position.copy(position);
-        _sprite.scale.set(0.06, 0.06, 1);
+        _sprite.scale.set(0.05, 0.05, 1);
 
         scene.add(_sprite);
         return _sprite;
