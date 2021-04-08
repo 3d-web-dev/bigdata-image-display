@@ -300,4 +300,4 @@ $('#mouseGuideCollapse').on('hidden.bs.collapse', function () {
 
 
 App();
-
+console.log('started...')
