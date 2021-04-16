@@ -51,8 +51,17 @@
             </div>
 
             <!-- AI Tag Section -->
-            <div class='container px-0 pt-3' style='background-color:white ;'>
-                <div class='title px-3 py-2'>AI Tags</div>
+            <div class='container px-0 pt-3' style='background-color:white;'>
+
+                <div class='title px-3 py-2 mb-3'>AI Tags</div>
+
+                <span class='mx-2' style='color:black; font-size: 20px;'>Display Markers</span>
+                <label class="switch mt-1">
+                    <input type="checkbox" id='displayMarkerCheckBox'>
+                    <span class="slider round"></span>
+                </label>
+
+
 
                 <div class="form-group mt-2" id='aiTagDiv' style="color:black;">
                     <!-- AI Tags Here -->
@@ -84,7 +93,8 @@
                     Assign Tag
                 </button>
 
-                <button type='button' class='btn btn-success mt-2 col-12' id="removeBtn">
+                <button type='button' class='btn btn-success mt-2 col-12' data-toggle="modal"
+                    data-target="#removeTagModal1" data-whatever="@mdo" id="removeBtn">
                     Remove Tag
                 </button>
 
@@ -212,6 +222,55 @@
 
                         <button type="button" class="btn btn-primary col-8 offset-2" id='assignTagBtn'>Assign
                             Tag</button>
+                    </div><br>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 1st modal for Remove Tag -->
+        <div class="modal fade" id="removeTagModal1" tabindex="-1" role="dialog" aria-labelledby="assignTagModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="title py-2 px-4" style="color:white">
+                        Remove Tag
+                    </div><br />
+
+                    <div class="modal-body pt-4">
+                        <button type="button" class="btn btn-primary col-8 offset-2" data-toggle="modal"
+                            id='useCurrentSelectionForRemoveBtn'>
+                            Use Current Selection
+                        </button>
+
+                        <button type="button" class="btn btn-primary col-8 offset-2 mt-4 mb-4" data-dismiss="modal">
+                            Return to Viewer to Make Selection
+                        </button>
+                    </div><br>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2nd modal for Remove Tag  -->
+        <div class="modal fade" id="removeTagModal2" tabindex="-1" role="dialog" aria-labelledby="removeTagModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="title py-2 px-4" style="color:white">
+                        Remove Tag
+                    </div>
+
+                    <div class="modal-body pt-4">
+                        <span style="font-size: 22px; justify-content: center;display: flex;">Select tags to remove from
+                            selected
+                            images.</span><br>
+
+                        <div id='removeUserTagDiv'>
+                            <!-- Checkboxes Created Here -->
+                        </div><br />
+
+                        <button type="button" class="btn btn-primary col-8 offset-2" id='removeTagBtn'>Remove
+                            Tag(s)</button>
                     </div><br>
                 </div>
             </div>

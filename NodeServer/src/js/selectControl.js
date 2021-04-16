@@ -18,6 +18,7 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
     var lastSelectedIndex;
     this.mouse = new THREE.Vector2();
 
+
     this.main = function () {
         const canvas = $('#canvas')[0];
         const selectionBox = new SelectionBox(camera, scene);
@@ -187,6 +188,24 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                 alert('There is No Selection Now.');
             }
         });
+
+        $('#useCurrentSelectionForRemoveBtn').click(() => {
+            let selectionStatus = false;
+            let j = 0;
+            while (j < chosenImages.length) {
+                if (chosenImages[j].length > 0) {
+                    selectionStatus = true;
+                    break;
+                }
+                j++;
+            }
+            if (selectionStatus) {
+                $('#removeTagModal1').modal('hide');
+                $('#removeTagModal2').modal('show');
+            } else {
+                alert('There is No Selection Now.');
+            }
+        });
     }
 
 
@@ -264,8 +283,8 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
 
         if (tagNames.length === 0) {
             alert('Please Select Tags To Remove');
+            return false;
         } else {
-            alert('Successfully Removed!');
             imageNameLists.forEach(imgNameList => {
                 imgNameList.forEach(img => {
                     tagNames.forEach(tagName => {
@@ -275,28 +294,34 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                     });
                 });
             });
+            alert('Successfully Removed!');
+            $('#removeTagModal2').modal('hide');
+            return true;
         }
     }
 
 
-
-    this.selectCategory = function (categoryNames) {
+    // AI Tag Click Event
+    this.selectCategory = function (categoryNames, locationNames) {
 
         for (var i = 0; i < def.numOfImages; ++i) {
-            chosenImages[i] = [];
-            imageNameLists[i].forEach((imgNameList, index) => {
+
+            imageNameLists[i].forEach((imgNameList) => {
+
                 if (categoryNames.includes(imgNameList.category)) {
-                    if (imgNameList.sprite)
-                        imgNameList.sprite.visible = true;
+
+                    if (imgNameList.sprite) imgNameList.sprite.visible = true;
                 } else {
-                    if (imgNameList.sprite)
-                        imgNameList.sprite.visible = false;
+
+                    if (imgNameList.sprite) imgNameList.sprite.visible = false;
                 }
             });
         }
+
+        this.selectLocation(locationNames, categoryNames);
     }
 
-    this.selectLocation = function (locationNames) {
+    this.selectLocation = function (locationNames, categoryNames) {
         let status = false;
         for (var i = 0; i < def.numOfImages; ++i) {
             chosenImages[i] = [];
@@ -318,9 +343,16 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
 
                 if (isIncluded)
                     chosenImages[i].push(index);
+
+                if ($('#displayMarkerCheckBox').prop('checked')) { // toggle is on
+                    if (categoryNames.includes(imgNameList.category)) {
+                        if (!chosenImages[i].includes(index)) chosenImages[i].push(index)
+                    }
+                }
             });
             if (chosenImages[i].length > 0) status = true;
         }
+
 
         if (status) {
             selectImages();

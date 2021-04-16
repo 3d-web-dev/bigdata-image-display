@@ -102,6 +102,7 @@ const App = () => {
     Promise.all(myPromises).then(() => {
 
         let checkedAssignUserTagNames = [];
+        let checkedRemoveUserTagNames = [];
 
         const meshBuilder = new MeshBuilder(jsonData, materials, scene);
 
@@ -115,6 +116,30 @@ const App = () => {
         let locationNames = Object.keys(location);
 
         const sc = new SelectControl(scene, camera, renderer, controls, meshBuilder, categoryNames);
+
+
+        // Toggle Switch
+        $('#displayMarkerCheckBox').click(() => {
+
+            let checkedUserTagNames = [];
+            locationNames.forEach(v => {
+                if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
+                    checkedUserTagNames.push(v);
+            });
+
+            let checkedAiTagNames = [];
+            categoryNames.forEach(v => {
+                if ($(`#${v}`).prop('checked'))
+                    checkedAiTagNames.push(v);
+            });
+
+            if ($('#displayMarkerCheckBox').prop('checked')) { // toggle is on
+                sc.selectCategory(checkedAiTagNames, checkedUserTagNames);
+            } else {
+                sc.selectLocation(checkedUserTagNames, []);
+            }
+        }); //click()
+
 
         // AI Tages
         categoryNames.forEach((txt, index) => {
@@ -134,7 +159,14 @@ const App = () => {
                     if ($(`#${v}`).prop('checked'))
                         checkedAiTagNames.push(v);
                 });
-                sc.selectCategory(checkedAiTagNames);
+
+                let checkedUserTagNames = [];
+                locationNames.forEach(v => {
+                    if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
+                        checkedUserTagNames.push(v);
+                });
+
+                sc.selectCategory(checkedAiTagNames, checkedUserTagNames);
             });
         });
 
@@ -159,7 +191,13 @@ const App = () => {
                     if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
                         checkedUserTagNames.push(v);
                 });
-                sc.selectLocation(checkedUserTagNames);
+
+                let checkedAiTagNames = [];
+                categoryNames.forEach(v => {
+                    if ($(`#${v}`).prop('checked'))
+                        checkedAiTagNames.push(v);
+                });
+                sc.selectLocation(checkedUserTagNames, checkedAiTagNames);
             });
 
 
@@ -179,6 +217,25 @@ const App = () => {
                 locationNames.forEach(v => {
                     if ($(`#assign_${v.replace(/\s/g, '')}`).prop('checked'))
                         checkedAssignUserTagNames.push(v);
+                });
+            });
+
+            // Remove-UserTag-Window Checkboxes
+            $('#removeUserTagDiv').append(`
+                <div class="form-check ml-3">
+                    <input class="form-check-input mt-3" type="checkbox"
+                        id="remove_${id}" value="${index}" />
+                    <label class="form-check-label pt-2 pl-2" for="remove_${id}">
+                        ${txt}
+                    </label>
+                </div>
+            `);
+
+            $(`#remove_${id}`).click(() => {
+                checkedRemoveUserTagNames = [];
+                locationNames.forEach(v => {
+                    if ($(`#remove_${v.replace(/\s/g, '')}`).prop('checked'))
+                        checkedRemoveUserTagNames.push(v);
                 });
             });
         });
@@ -219,10 +276,16 @@ const App = () => {
                         if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
                             checkedUserTagNames.push(v);
                     });
-                    sc.selectLocation(checkedUserTagNames);
+
+                    let checkedAiTagNames = [];
+                    categoryNames.forEach(v => {
+                        if ($(`#${v}`).prop('checked'))
+                            checkedAiTagNames.push(v);
+                    });
+                    sc.selectLocation(checkedUserTagNames, checkedAiTagNames);
                 });
 
-
+                //Assign Tag Window CheckBoxes
                 $('#assignUserTagDiv').append(`
                     <div class="form-check ml-3">
                         <input class="form-check-input mt-3" type="checkbox"
@@ -240,6 +303,24 @@ const App = () => {
                     });
                 });
 
+                //Remove Tag Window CheckBoxes
+                $('#removeUserTagDiv').append(`
+                    <div class="form-check ml-3">
+                        <input class="form-check-input mt-3" type="checkbox"
+                            id="remove_${id}" value="${index}" />
+                        <label class="form-check-label pt-2 pl-2" for="remove_${id}">
+                            ${newLocation}
+                        </label>
+                    </div>
+                `);
+                $(`#remove_${id}`).click(() => {
+                    checkedRemoveUserTagNames = [];
+                    locationNames.forEach(v => {
+                        if ($(`#remove_${v.replace(/\s/g, '')}`).prop('checked'))
+                            checkedRemoveUserTagNames.push(v);
+                    });
+                });
+
                 $('#categoryModal').modal('hide');
                 alert('New Tag Successfully Added.');
             } else {
@@ -247,8 +328,8 @@ const App = () => {
             }
         });
 
-        //Asign Tag Button Click
 
+        //Asign Tag Button Click
         // Initialize Checkboxes In Assign User Tags Window
         $('#assignBtn').click(() => {
             locationNames.forEach(v => {
@@ -267,23 +348,22 @@ const App = () => {
         });
 
 
-        // Remove Tag Button Click
+        //Remove Tag Button Click
+        // Initialize Checkboxes In Remove Tags Window
         $('#removeBtn').click(() => {
-            let checkedUserTagNames = [];
-            locationNames.forEach(tagName => {
-                const id = tagName.replace(/\s/g, '');
-                if ($(`#${id}`).prop('checked')) {
-                    checkedUserTagNames.push(tagName);
-                    $(`#${id}`).remove();
-                    $(`label[for=${id}]`).remove();
-
-                    $(`#assign_${id}`).remove();
-                    $(`label[for=assign_${id}]`).remove();
-                }
+            locationNames.forEach(v => {
+                $(`#remove_${v.replace(/\s/g, '')}`).prop('checked', false);
             });
+        });
 
-            sc.removeTags(checkedUserTagNames);
-            sc.unselectAll();
+        // Final Remove-Tag Button Click Event In remove UserTag-Window
+        $('#removeTagBtn').click(() => {
+            const status = sc.removeTags(checkedRemoveUserTagNames);
+            if (status) {
+                locationNames.forEach(v => {
+                    $(`#${v.replace(/\s/g, '')}`).prop('checked', false);
+                });
+            }
         });
 
     });
