@@ -133,11 +133,8 @@ const App = () => {
                     checkedAiTagNames.push(v);
             });
 
-            if ($('#displayMarkerCheckBox').prop('checked')) { // toggle is on
-                sc.selectCategory(checkedAiTagNames, checkedUserTagNames);
-            } else {
-                sc.selectLocation(checkedUserTagNames, []);
-            }
+            sc.selectCategory(checkedAiTagNames, checkedUserTagNames);
+
         }); //click()
 
 

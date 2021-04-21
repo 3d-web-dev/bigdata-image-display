@@ -304,18 +304,31 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
     // AI Tag Click Event
     this.selectCategory = function (categoryNames, locationNames) {
 
-        for (var i = 0; i < def.numOfImages; ++i) {
+        if ($('#displayMarkerCheckBox').prop('checked')) { // toggle is on
+            for (var i = 0; i < def.numOfImages; ++i) {
 
-            imageNameLists[i].forEach((imgNameList) => {
+                imageNameLists[i].forEach((imgNameList) => {
 
-                if (categoryNames.includes(imgNameList.category)) {
+                    if (categoryNames.includes(imgNameList.category)) {
 
-                    if (imgNameList.sprite) imgNameList.sprite.visible = true;
-                } else {
+                        if (imgNameList.sprite) imgNameList.sprite.visible = true;
+                    } else {
 
-                    if (imgNameList.sprite) imgNameList.sprite.visible = false;
-                }
-            });
+                        if (imgNameList.sprite) imgNameList.sprite.visible = false;
+                    }
+                });
+            }
+        } else {
+            for (var i = 0; i < def.numOfImages; ++i) {
+
+                imageNameLists[i].forEach((imgNameList) => {
+
+                    if (categoryNames.includes(imgNameList.category)) {
+
+                        if (imgNameList.sprite) imgNameList.sprite.visible = false;
+                    }
+                });
+            }
         }
 
         this.selectLocation(locationNames, categoryNames);
@@ -344,10 +357,8 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                 if (isIncluded)
                     chosenImages[i].push(index);
 
-                if ($('#displayMarkerCheckBox').prop('checked')) { // toggle is on
-                    if (categoryNames.includes(imgNameList.category)) {
-                        if (!chosenImages[i].includes(index)) chosenImages[i].push(index)
-                    }
+                if (categoryNames.includes(imgNameList.category)) {
+                    if (!chosenImages[i].includes(index)) chosenImages[i].push(index)
                 }
             });
             if (chosenImages[i].length > 0) status = true;
