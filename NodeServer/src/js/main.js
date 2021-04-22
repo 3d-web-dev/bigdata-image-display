@@ -129,7 +129,7 @@ const App = () => {
 
             let checkedAiTagNames = [];
             categoryNames.forEach(v => {
-                if ($(`#${v}`).prop('checked'))
+                if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
                     checkedAiTagNames.push(v);
             });
 
@@ -143,17 +143,17 @@ const App = () => {
             $('#aiTagDiv').append(`
                 <div class="form-check ml-3">
                     <input class="form-check-input mt-3" type="checkbox"
-                        id="${txt}" value="${index}" />
-                    <label class="form-check-label pt-2 pl-2" for="${txt}">
+                        id="${txt.replace(/\s/g, '')}" value="${index}" />
+                    <label class="form-check-label pt-2 pl-2" for="${txt.replace(/\s/g, '')}">
                         ${txt}
                     </label>
                 </div>
             `);
 
-            $(`#${txt}`).click(() => {
+            $(`#${txt.replace(/\s/g, '')}`).click(() => {
                 let checkedAiTagNames = [];
                 categoryNames.forEach(v => {
-                    if ($(`#${v}`).prop('checked'))
+                    if ($(`#${v.replace(/\s/g, '')}`).prop('checked'))
                         checkedAiTagNames.push(v);
                 });
 

@@ -330,7 +330,6 @@ var SelectControl = function (scene, camera, renderer, controls, meshBuilder, ca
                 });
             }
         }
-
         this.selectLocation(locationNames, categoryNames);
     }
 

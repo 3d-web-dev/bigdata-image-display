@@ -4,7 +4,7 @@
     "y": 0.1052088812,
     "z": 0.6900387735,
     "img": "outcrop1.jpg",
-    "class": "outcrop",
+    "class": "Data Table",
     "filepath": "https:\/\/viz-viz-demo.s3.us-east-2.amazonaws.com\/outcrop\/outcrop1.jpg",
     "user_tags": [
       "North America",
@@ -21,7 +21,7 @@
     "y": 0.321516484,
     "z": 0.7257104548,
     "img": "outcrop10.jpg",
-    "class": "None",
+    "class": "core",
     "filepath": "https:\/\/viz-viz-demo.s3.us-east-2.amazonaws.com\/outcrop\/outcrop10.jpg",
     "user_tags": [
       "Africa",
@@ -38,7 +38,7 @@
     "y": 0.1593636572,
     "z": 0.2218665227,
     "img": "outcrop100.jpg",
-    "class": "outcrop",
+    "class": "thin section",
     "filepath": "https:\/\/viz-viz-demo.s3.us-east-2.amazonaws.com\/outcrop\/outcrop100.jpg",
     "user_tags": [
       "North America",
